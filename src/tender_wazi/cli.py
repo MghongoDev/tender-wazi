@@ -5,7 +5,9 @@ import os
 import boto3
 import psycopg
 
+from tender_wazi.http import PoliteClient
 from tender_wazi.migrate import migrate
+from tender_wazi.sources.portal_b import collect as collect_portal_b
 from tender_wazi.sources.ppip import download_year, normalize_category, parse_line
 
 
@@ -13,7 +15,7 @@ def run_ppip(year: int) -> None:
     """Fetch one year of PPIP data, save it raw, and print the parsed counts."""
     conn = psycopg.connect(os.environ["DATABASE_URL_DIRECT"])
     s3 = boto3.resource("s3", endpoint_url=os.environ.get("AWS_ENDPOINT_URL_S3"))
-    bucket = s3.Bucket(os.environ["RAW_BUCKET"])
+    bucket = s3.Bucket(os.environ["RAW_BUCKET"])  # type: ignore[reportAttributeAccessIssue]
 
     raw_id, body = download_year(conn, bucket, year)
     print(f"saved raw {raw_id} ({len(body)} bytes)")
@@ -29,6 +31,17 @@ def run_ppip(year: int) -> None:
     for category, n in sorted(counts.items()):
         print(f"  {category}: {n}")
 
+    conn.close()
+
+
+def run_portal_b(max_details: int | None = None) -> None:
+    """Fetch the Kenya Power listing and its detail pages, saving every raw payload."""
+    conn = psycopg.connect(os.environ["DATABASE_URL_DIRECT"])
+    s3 = boto3.resource("s3", endpoint_url=os.environ.get("AWS_ENDPOINT_URL_S3"))
+    bucket = s3.Bucket(os.environ["RAW_BUCKET"])  # type: ignore[reportAttributeAccessIssue]
+    client = PoliteClient(min_interval=2.0)
+    saved = collect_portal_b(conn, bucket, client, max_details)
+    print(f"saved {saved} detail pages")
     conn.close()
 
 
@@ -49,7 +62,7 @@ def main() -> None:
     elif args.source == "ppip":
         run_ppip(args.year)
     else:
-        raise SystemExit("portal_b is not implemented yet")
+        run_portal_b(args.max_pages)
 
 
 if __name__ == "__main__":
