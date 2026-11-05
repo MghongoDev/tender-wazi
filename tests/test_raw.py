@@ -7,6 +7,7 @@ class FakeConn:
     def __init__(self, row=(42,)):
         self.row = row
         self.executed = []
+        self.commits = 0
 
     def execute(self, sql, params=None):
         self.executed.append((sql, params))
@@ -14,6 +15,9 @@ class FakeConn:
 
     def fetchone(self):
         return self.row
+
+    def commit(self):
+        self.commits += 1
 
 
 class FakeBucket:
@@ -47,6 +51,7 @@ def test_save_raw_writes_the_object_and_records_the_manifest_row():
     assert sha == hashlib.sha256(body).hexdigest()
     assert object_key == key
     assert fetched_at.tzinfo is not None
+    assert conn.commits == 1
 
 
 def test_save_raw_key_carries_the_source_and_a_content_hash():

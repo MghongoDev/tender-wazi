@@ -17,4 +17,5 @@ def save_raw(conn, bucket, source: str, url: str, body: bytes, status: int) -> i
         "VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
         (source, url, ts, status, sha, key),
     ).fetchone()
+    conn.commit()
     return row[0]
