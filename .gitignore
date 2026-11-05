@@ -1,0 +1,10 @@
+.env
+.env.local
+.env.*.local
+data/
+neon.txt
+tender-wazi-implementation-guide.md
+.neon
+__pycache__/
+*.pyc
+.venv/
