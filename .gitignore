@@ -8,3 +8,4 @@ tender-wazi-implementation-guide.md
 __pycache__/
 *.pyc
 .venv/
+.hermes/
