@@ -21,7 +21,7 @@ Two sources feed Tender-wazi. Each section records the URL, who runs the source,
 - URL: https://kplc.co.ke/tender (the real listing). https://kplc.co.ke/eprocurement is a hub with two recent tenders; the first fixture captured that hub by mistake.
 - Who runs it: Kenya Power and Lighting Company (KPLC), a state corporation.
 - Format: server-rendered HTML on the first page. The listing shows Reference No. and Tender Title. Detail pages at `/tender/<slug>` show Tender Number, Tender Title, Publish Date, Closing Date, Eligibility, Pre Bid, a Download link and an Addendums table.
-- Pagination: Laravel Livewire. Page 2 and beyond need POSTs to /livewire/update with a CSRF token and a component snapshot. A plain GET walk stops at page 1. There are 31 pages.
+- Pagination: Laravel Livewire. Page 2 and beyond need POSTs to /livewire/update with a CSRF token and a component snapshot. A scripted update returned 419 (expired token) and 500 (opaque server error) in testing, so page 1 only is collected for now. There are 31 pages.
 - Update frequency: not stated. Compare the newest entries against the previous run.
 - Terms: the footer links to /data-privacy (an AI and data-privacy statement) and /quality-policy. Neither forbids automated access to the public listings. The /terms-and-conditions URL is 404. Contact customercare@kplc.co.ke or dpo@kplc.co.ke.
 - robots.txt: https://kplc.co.ke/robots.txt allows all crawlers and lists a sitemap whose /tenders and /terms-and-conditions URLs are 404.

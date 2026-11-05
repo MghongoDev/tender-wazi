@@ -6,7 +6,7 @@ Seven modules. Each owns its own data and tests. Build in dependency order. This
 |---|---|---|
 | platform | Repo, Neon project and branches, credentials, object storage, Render services | — |
 | collect | PPIP OCDS reader, HTML portal scraper, polite HTTP client, raw payloads, raw_manifest, docs/sources.md, fixtures | platform |
-| curate | Staging tables, normalize to one schema, versioned upserts, tender_seen, tender_lineage, migration runner, SQL migrations | platform, collect |
+| curate | Staging tables, normalize to one schema, versioned upserts, tender_seen, tender_lineage, SQL migrations | platform, collect |
 | classify | Sector rules YAML, classifier, rules version, hand-labelled sample, measured precision and miss rate | curate |
 | quality | Row and table checks, rejects, quality_runs, volume and schema drift, source_health | curate, classify |
 | serve | Read-only FastAPI API, api views, api_reader role, facet counts, static frontend | platform, curate, classify, quality |
@@ -24,5 +24,6 @@ Key interfaces:
 - classify to serve: tender_sector (sectors, matched_terms, rules_version).
 - quality to serve: source_health, quality_runs.
 - ops runs and deploys all six. Nothing depends on ops.
+- The migration runner (src/tender_wazi/migrate.py) is shared: collect bootstraps it and curate's migrations use it.
 
 Approved by the user on 5 November 2026.

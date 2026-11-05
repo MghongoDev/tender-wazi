@@ -4,7 +4,7 @@
 
 Fetch public tender notices from PPIP (OCDS) and Kenya Power's tender listing, save every raw payload to object storage, record each fetch in raw_manifest, and keep the source record in docs/sources.md.
 
-Success looks like: `python -m tender_wazi run --source ppip --year 2025` saves the raw file and its manifest row; `python -m tender_wazi run --source portal_b --max-pages 3` saves raw HTML and manifest rows; a second run of an unchanged source adds no duplicate raw rows; the parsers pass their fixture tests.
+Success looks like: `python -m tender_wazi run --source ppip --year 2025` saves the raw file and its manifest row; `python -m tender_wazi run --source portal_b` saves raw HTML and manifest rows; a second run of an unchanged source adds no duplicate raw rows; the parsers pass their fixture tests.
 
 ## Tech Stack
 
@@ -104,8 +104,8 @@ docs/
 - A second run of an unchanged source adds no duplicate raw rows.
 - docs/sources.md records both sources with the date checked.
 
-## Open Questions
+## Decisions
 
-1. Kenya Power's pagination is Laravel Livewire (POST with a CSRF token and component snapshot). Do you want me to implement the Livewire pagination, collect page 1 only for the MVP, or pick a different Source B?
-2. The e-GP portal is the new system of record but is a JavaScript app. Add it after the MVP?
-3. The map assigns the migration runner and the staging tables to curate. This module includes a minimal runner and raw_manifest, because collect cannot record fetches without them. Confirm the boundary.
+1. Kenya Power pagination: page 1 only for the MVP. Page 2 and beyond use Laravel Livewire (POST /livewire/update with a CSRF token and a component snapshot). A scripted update returned 419 and 500 in testing, so it is deferred.
+2. e-GP: deferred until after the MVP. It is the new system of record but a JavaScript app that needs its API or a headless browser.
+3. Migration runner: shared. collect bootstraps it (src/tender_wazi/migrate.py) and owns raw_manifest; curate's migrations use the same runner.

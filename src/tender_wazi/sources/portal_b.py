@@ -4,6 +4,9 @@ from bs4 import BeautifulSoup
 
 from tender_wazi.raw import save_raw
 
+# Page 2 and beyond use Laravel Livewire (POST /livewire/update with a CSRF
+# token and a component snapshot). A scripted update returned 419 and 500 in
+# testing, so this module collects page 1 only. See docs/sources.md.
 LISTING_URL = "https://kplc.co.ke/tender"
 BASE_URL = "https://kplc.co.ke"
 ENTRY_SELECTOR = "div.flex.flex-row.gap-8.pt-4"
