@@ -41,19 +41,18 @@ Create the api schema and the api_reader role:
 # Neon MCP: run_sql "ALTER ROLE api_reader SET statement_timeout = '5s'"
 ```
 
-Create the storage credential and the bucket on main:
+Create the bucket on main, then pull the storage credential into .env:
 
 ```
-# Neon MCP: create_credential branch_id=br-solitary-bird-ben3owbs scopes=["storage:read","storage:write"] principal_type="user"
 neon bucket create tender-wazi-raw --project-id sweet-dawn-80243405 --branch main
-```
-
-Fetch the credentials into .env (never print them):
-
-```
-neon connection-string main --project-id sweet-dawn-80243405 --role-name neondb_owner         # DATABASE_URL_DIRECT
-neon connection-string main --project-id sweet-dawn-80243405 --role-name api_reader --pooled  # DATABASE_URL
 neon env pull --project-id sweet-dawn-80243405 --branch main --file .env -s object-storage
+```
+
+Fetch the database credentials into .env (never print them). The local .env points at dev, per the guide's checkpoint. CI uses the production strings from repository secrets:
+
+```
+neon connection-string dev --project-id sweet-dawn-80243405 --role-name neondb_owner         # DATABASE_URL_DIRECT
+neon connection-string dev --project-id sweet-dawn-80243405 --role-name api_reader --pooled  # DATABASE_URL
 ```
 
 Verify:
