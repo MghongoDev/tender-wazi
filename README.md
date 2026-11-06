@@ -59,6 +59,13 @@ improving the rules never creates a new version.
 
 See `docs/sector-method.md` for the taxonomy, rules and the measured precision.
 
+## Quality
+
+The quality module runs a row and table checks after every load and records the
+results in `quality_runs`. Rejects go to `rejects`. A run that fails any check
+exits non-zero. See `docs/reference/quality.md` for the methodology and the check
+command.
+
 ## Modules
 
 See CAPABILITY-MAP.md for the module map and the build order.

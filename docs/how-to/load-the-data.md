@@ -38,3 +38,24 @@ To see versioning work, change a title in a saved raw payload and re-run the loa
 ## What to do when a load fails
 
 The load runs in one transaction. A failure rolls back, so the curated tables keep their previous state. The raw payload is already saved, so the next run starts from the raw layer.
+
+## Run the quality checks
+
+After each load the quality checks run and record in `quality_runs`. A run that fails any check exits non-zero and notifies.
+
+```bash
+uv run python -m tender_wazi check
+```
+
+The checks cover null rates per key field, duplicate open versions, value outliers,
+sector spread, volume drift and (for the HTML source) schema drift. Rejects are
+captures in `rejects`, never dropped.
+
+## Source health
+
+The `source_health` view summarises each source's latest run, whether it was ok, and
+the raw fetch counts.
+
+```bash
+psql "$DATABASE_URL_DIRECT" -c "select * from source_health"
+```

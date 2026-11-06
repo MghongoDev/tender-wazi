@@ -69,3 +69,14 @@ The collect module owns `src/tender_wazi/migrate.py`. The curate module uses it.
 Why: one runner for all migrations. A second runner would drift.
 
 Consequences: the curate migrations live in `sql/migrations/` and run through the same command.
+
+## ADR 0009: Quality checks run after every load
+The quality module records a row in `quality_runs` for every load, and copies each
+rejected row into `rejects`. It checks null rates, duplicate open versions, value
+outliers, sector spread, volume drift and HTML schema drift.
+
+Why: the pipeline must tell you when data is wrong or a source goes quiet, and must
+not load bad data silently.
+
+Consequences: a run that fails any check exits non-zero, so the daily workflow
+notifies without extra tools.
