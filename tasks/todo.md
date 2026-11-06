@@ -1,14 +1,16 @@
-# Tasks: curate
+# Tasks: classify
 
-- [x] Write `sql/migrations/002_curated.sql` and apply it
-  - Verified: the staging tables, `tender_versions`, `tender_seen` and `tender_lineage` exist on dev
-- [x] Write `tests/test_normalize.py` and `src/tender_wazi/normalize.py`
-  - Verified: 8 unit tests pass
-- [x] Write `tests/test_store.py` and `src/tender_wazi/store.py`
-  - Verified: 3 integration tests pass
-- [x] Extend the CLI to normalize and store
-  - Verified: `run --source ppip --year 2025` fills the staging and curated tables
-- [x] Run the first load for both sources
-  - Verified: ppip 33,258 and portal_b 9 open versions
-- [x] Update the docs
-  - Verified: the data dictionary, decisions, how-to, glossary and README reflect the curated model
+- [ ] Write `config/sector_rules.yaml`
+  - Verify: the version is a non-empty string and every sector has an `any` list
+- [ ] Write `tests/test_sectors.py` and `src/tender_wazi/sectors.py`
+  - Verify: the unit tests pass
+- [ ] Write `sql/migrations/003_sector.sql` and apply it
+  - Verify: `tender_sector` exists on dev
+- [ ] Add the `classify` CLI command
+  - Verify: `uv run python -m tender_wazi classify` labels every current notice
+- [ ] Run the classifier and check the sector spread
+  - Verify: the counts per sector look sensible
+- [ ] Pull and label the sample, write `tests/sector_labels.csv`, compute the precision and miss rate
+  - Verify: the tech label's precision is at or above 85%
+- [ ] Update the docs
+  - Verify: sector-method.md, the data dictionary, decisions, glossary and README reflect the classifier

@@ -42,7 +42,21 @@ One row per notice ever seen.
 | source | text | |
 | source_id | text | |
 | first_seen_at | timestamptz | |
-| last_seen_at | timestamptz | A notice missing from a later complete fetch keeps an older last_seen_at. |
+|| last_seen_at | timestamptz | A notice missing from a later complete fetch keeps an older last_seen_at. |
+
+## tender_sector
+
+One row per notice with its sector labels. The classifier never changes
+tender_versions.
+
+| Field | Type | Notes |
+|---|---|---|
+| source | text | ppip or portal_b. |
+| source_id | text | The PPIP ocid, or the Kenya Power reference number. |
+| sectors | text[] | One or more sectors. |
+| matched_terms | text[] | The terms that matched. |
+| rules_version | text | The rules version that produced these labels. |
+| classified_at | timestamptz | When the labels were written. |
 
 ## tender_lineage
 

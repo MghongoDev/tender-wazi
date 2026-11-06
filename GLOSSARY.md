@@ -39,5 +39,8 @@ Whether a notice is national or county. Tender-wazi infers it from the buyer nam
 ## Category
 The normalized procurement category: goods, works, services, consultancy or other.
 
+## Sector
+One of the ten taxonomy labels: `ict_data_tech`, `works_construction`, `health_medical`, `education_training`, `agriculture_environment`, `energy_utilities`, `transport_vehicles`, `professional_services`, `general_supplies` or `other`. A notice can carry several.
+
 ## Sector label
-A later, finer classification. The classify module adds it. It is not part of `tender_versions`.
+The label a notice carries. Stored in `tender_sector`, never in `tender_versions`. It is a later, finer classification than the curate model and is produced by the classify module from `config/sector_rules.yaml`.

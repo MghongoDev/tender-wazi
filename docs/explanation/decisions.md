@@ -50,6 +50,18 @@ Why: page 2 and beyond use Laravel Livewire. A scripted update returned 419 and 
 
 Consequences: the record misses tenders on later pages. A later step can add a headless browser.
 
+## ADR 0008: Classify from the title only
+
+The classifier reads the title of each notice and matches it against the terms
+in `config/sector_rules.yaml`. It never reads the buyer name or the raw payload.
+
+Why: the buyer name is unreliable. An ICT agency buys furniture, and a ministry
+of works buys software. The title names the work.
+
+Consequences: the classifier is deterministic and re-runnable. A change to the
+rules means a full re-run over every notice, because the labels live in
+`tender_sector`, not in `tender_versions`.
+
 ## ADR 0007: The shared migration runner
 
 The collect module owns `src/tender_wazi/migrate.py`. The curate module uses it.

@@ -8,6 +8,7 @@ import psycopg
 from tender_wazi.http import PoliteClient
 from tender_wazi.migrate import migrate
 from tender_wazi.normalize import normalize_portal_b, normalize_ppip
+from tender_wazi.sectors import classify, load_rules, store_sectors
 from tender_wazi.sources.portal_b import collect as collect_portal_b
 from tender_wazi.sources.ppip import download_year, parse_line
 from tender_wazi.store import load_portal_b_staging, load_ppip_staging, store_batch
@@ -60,6 +61,31 @@ def run_portal_b(max_details: int | None = None) -> None:
     conn.close()
 
 
+def run_classify() -> None:
+    """Label every current notice with sectors."""
+    version, rules = load_rules()
+    conn = psycopg.connect(os.environ["DATABASE_URL_DIRECT"])
+    with conn.cursor() as cur:
+        cur.execute(
+            "select source, source_id, title from tender_versions where valid_to is null"
+        )
+        fetched = cur.fetchall()
+    rows = []
+    for source, source_id, title in fetched:
+        sectors, matched = classify(title, rules)
+        rows.append(
+            {
+                "source": source,
+                "source_id": source_id,
+                "sectors": sectors,
+                "matched_terms": matched,
+            }
+        )
+    store_sectors(conn, rows, version)
+    print(f"labeled {len(rows)} notices with rules version {version}")
+    conn.close()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(prog="tender_wazi")
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -70,10 +96,13 @@ def main() -> None:
     run.add_argument("--max-pages", type=int, default=None)
 
     sub.add_parser("migrate")
+    sub.add_parser("classify")
     args = parser.parse_args()
 
     if args.cmd == "migrate":
         migrate(os.environ["DATABASE_URL_DIRECT"])
+    elif args.cmd == "classify":
+        run_classify()
     elif args.source == "ppip":
         run_ppip(args.year)
     else:

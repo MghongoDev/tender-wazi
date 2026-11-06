@@ -1,26 +1,28 @@
-# Plan: curate
+# Plan: classify
 
 ## Goal
 
-Normalize both sources into one schema, version changed notices, and keep the history. Update the documentation at each step.
+Label every current notice with sectors from a fixed taxonomy, store the matched terms and the rules version, and measure the tech label's precision and miss rate. Update the documentation at each step.
 
 ## Steps
 
-1. Write `sql/migrations/002_curated.sql`: `staging_ppip_tenders`, `staging_portal_b_tenders`, `tender_versions`, `tender_seen`, `tender_lineage`. Apply it.
-2. Write `tests/test_normalize.py`, then `src/tender_wazi/normalize.py`: `parse_datetime`, `jurisdiction`, `normalize_ppip`, `normalize_portal_b`, `content_hash`.
-3. Write `tests/test_store.py`, then `src/tender_wazi/store.py`: the three-step versioned upsert.
-4. Extend the CLI so `run --source ppip --year 2025` and `run --source portal_b` also normalize and store.
-5. Run the first load for both sources into dev. Verify the counts and the version behaviour.
-6. Update the docs: data dictionary, decisions, README, glossary.
+1. Write `config/sector_rules.yaml`: a version string and terms per sector. Start with the guide's tech list.
+2. Write `tests/test_sectors.py`, then `src/tender_wazi/sectors.py`: `load_rules`, `classify`.
+3. Write `sql/migrations/003_sector.sql`: `tender_sector`. Apply it.
+4. Add the `classify` CLI command: label every current notice and upsert.
+5. Run `classify` on dev. Verify the sector spread.
+6. Pull the hand-labelled sample (100 tagged `ict_data_tech`, 100 not), label it, write `tests/sector_labels.csv`, and compute the precision and miss rate.
+7. Improve the rules from the errors, bump the version, and measure again.
+8. Update the docs: sector-method.md, data dictionary, decisions, glossary, README.
 
 ## Risks
 
-- The PPIP category set on the full dataset is unknown; the mapping may need extending after the first load.
-- The date parsing must handle both the PPIP ISO strings and the Kenya Power DD/MM/YYYY strings.
-- The versioned upsert must be idempotent, so a rerun adds no versions.
+- The rules will have false positives. The labelled sample finds them.
+- The sample must be drawn at random across both sources.
+- The rules version must change when the terms change, or the labels go stale.
 
 ## Verification
 
 - `uv run pytest -q`.
-- `psql "$DATABASE_URL_DIRECT" -c "select source, count(*) from tender_versions where valid_to is null group by 1"`.
-- A changed notice creates exactly one new version; an unchanged one creates none.
+- `psql "$DATABASE_URL_DIRECT" -c "select unnest(sectors), count(*) from tender_sector group by 1 order by 2 desc"`.
+- The tech label's precision is at or above 85% on the labelled sample.

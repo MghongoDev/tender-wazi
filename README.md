@@ -50,6 +50,15 @@ Never commit `.env`. See SPEC-platform.md.
 - `CAPABILITY-MAP.md` — the module map.
 - `GLOSSARY.md` — the domain vocabulary.
 
+## Sector classification
+
+The classify module labels every notice with one or more sectors from the ten
+sector taxonomy. Rules live in `config/sector_rules.yaml` and are versioned.
+The label is stored in `tender_sector`, never in `tender_versions`, so
+improving the rules never creates a new version.
+
+See `docs/sector-method.md` for the taxonomy, rules and the measured precision.
+
 ## Modules
 
 See CAPABILITY-MAP.md for the module map and the build order.

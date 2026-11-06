@@ -1,0 +1,57 @@
+version: "2026-11-a"
+sectors:
+  ict_data_tech:
+    any: ["ICT", "software", "information system", "ERP", "cyber ?security",
+          "data cent(re|er)", "database", "cloud", "website", "web portal",
+          "laptops?", "servers?", "structured cabling", "internet", "bandwidth",
+          "VSAT", "mobile app", "analytics", "software licen[cs]es?",
+          "computers?", "printers?", "network equipment", "telecom",
+          "fibre optic", "CCTV", "biometric", "ICT equipment", "IT equipment",
+          "surveillance camera", "radio communication"]
+    not: []
+  works_construction:
+    any: ["construction", "building", "civil works", "rehabilitation",
+          "renovation", "roads?", "bridges?", "dams?", "housing",
+          "contractor", "masonry", "carpentry", "plumbing",
+          "electrical installation", "paving", "drainage"]
+    not: []
+  health_medical:
+    any: ["medical", "pharmaceutical", "hospital", "health", "clinical",
+          "laboratory equipment", "vaccines?", "medicines?", "ambulances?",
+          "dental", "radiology", "x-ray", "surgical", "nutritional"]
+    not: []
+  education_training:
+    any: ["education", "training", "school", "university", "college",
+          "books?", "stationery", "desks?", "blackboards?", "curriculum",
+          "scholarships?", "laptop", "students?", "teachers?"]
+    not: []
+  agriculture_environment:
+    any: ["agriculture", "agricultural", "livestock", "fisheries?", "fishing",
+          "environment", "forestry", "crops?", "seeds?", "fertilizers?",
+          "pesticides?", "veterinary", "hides?", "skins?", "coffee", "tea",
+          "maize", "wheat", "rice", "sugarcane", "irrigation equipment"]
+    not: []
+  energy_utilities:
+    any: ["energy", "power", "electricity", "petroleum", "oil", "gas",
+          "water", "sanitation", "sewerage", "renewable", "solar", "wind",
+          "transformers?", "substations?", "electric cables?", "utilities"]
+    not: []
+  transport_vehicles:
+    any: ["transport", "vehicle", "motor", "cars?", "trucks?", "buses?",
+          "spare parts", "tyres?", "aviation", "aircraft", "maritime",
+          "railway", "locomotives?", "rolling stock", "fuel", "drivers?"]
+    not: []
+  professional_services:
+    any: ["consulting", "consultancy", "audit", "legal", "insurance",
+          "banking", "research", "survey", "valuers?", "valuation",
+          "actuarial", "recruitment", "security services", "cleaning services",
+          "catering", "printing", "advertising", "public relations"]
+    not: []
+  general_supplies:
+    any: ["office supplies", "furniture", "uniforms?", "food", "rations?",
+          "general supplies", "hardware", "tools", "generators?",
+          "office equipment", "cleaning materials", "protective clothing"]
+    not: []
+  other:
+    any: []
+    not: []
