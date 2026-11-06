@@ -2,7 +2,7 @@
 
 ## Objective
 
-Fetch public tender notices from PPIP (OCDS) and Kenya Power's tender listing, save every raw payload to object storage, record each fetch in raw_manifest, and keep the source record in docs/sources.md.
+Fetch public tender notices from PPIP (OCDS) and Kenya Power's tender listing, save every raw payload to object storage, record each fetch in raw_manifest, and keep the source record in docs/reference/sources.md.
 
 Success looks like: `python -m tender_wazi run --source ppip --year 2025` saves the raw file and its manifest row; `python -m tender_wazi run --source portal_b` saves raw HTML and manifest rows; a second run of an unchanged source adds no duplicate raw rows; the parsers pass their fixture tests.
 
@@ -72,7 +72,7 @@ tests/
   test_ppip.py
   test_portal_b.py
 docs/
-  sources.md
+  reference/sources.md
 ```
 
 ## Code Style
@@ -102,7 +102,7 @@ docs/
 - `uv run python -m tender_wazi run --source ppip --year 2025` saves the raw file and one manifest row.
 - `uv run python -m tender_wazi run --source portal_b` fetches page 1 of the Kenya Power listing and its detail pages, saves raw HTML and manifest rows, and dedupes by reference. Request gaps are at least 2 seconds. The Livewire pagination beyond page 1 is a documented limitation.
 - A second run of an unchanged source adds no duplicate raw rows.
-- docs/sources.md records both sources with the date checked.
+- docs/reference/sources.md records both sources with the date checked.
 
 ## Decisions
 

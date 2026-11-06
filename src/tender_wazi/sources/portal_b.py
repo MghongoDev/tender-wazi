@@ -6,7 +6,7 @@ from tender_wazi.raw import save_raw
 
 # Page 2 and beyond use Laravel Livewire (POST /livewire/update with a CSRF
 # token and a component snapshot). A scripted update returned 419 and 500 in
-# testing, so this module collects page 1 only. See docs/sources.md.
+# testing, so this module collects page 1 only. See docs/reference/sources.md.
 LISTING_URL = "https://kplc.co.ke/tender"
 BASE_URL = "https://kplc.co.ke"
 ENTRY_SELECTOR = "div.flex.flex-row.gap-8.pt-4"
@@ -77,17 +77,23 @@ def parse_detail(html: str) -> dict:
     }
 
 
-def collect(conn, bucket, client, max_details=None) -> int:
-    """Fetch the listing and its detail pages, saving every raw payload."""
+def collect(conn, bucket, client, max_details=None) -> list[dict]:
+    """Fetch the listing and its detail pages, saving every raw payload.
+
+    Returns the parsed detail rows, each carrying its raw_id.
+    """
     response = client.get(LISTING_URL)
     save_raw(conn, bucket, "portal_b", LISTING_URL, response.content, response.status_code)
     rows = parse_listing(response.text)
-    saved = 0
+    parsed = []
     for index, row in enumerate(rows):
         if max_details is not None and index >= max_details:
             break
         url = BASE_URL + row["detail_url"]
         detail = client.get(url)
-        save_raw(conn, bucket, "portal_b", url, detail.content, detail.status_code)
-        saved += 1
-    return saved
+        raw_id = save_raw(conn, bucket, "portal_b", url, detail.content, detail.status_code)
+        record = parse_detail(detail.text)
+        record["raw_id"] = raw_id
+        record["detail_url"] = row["detail_url"]
+        parsed.append(record)
+    return parsed

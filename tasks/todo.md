@@ -1,16 +1,14 @@
-# Tasks: platform
+# Tasks: curate
 
-- [x] Scaffold the repo files (.gitignore, .env.example, README.md)
-  - Verify: files exist and .env is ignored
-- [x] Create the GitHub repo and push
-  - Verify: gh repo view MghongoDev/tender-wazi
-- [x] Rename the Neon default branch to main and create dev
-  - Verify: neon branch list shows main and dev
-- [x] Create the api schema and the api_reader role
-  - Verify: the role can connect through the pooled string
-- [x] Create the storage credential and the tender-wazi-raw bucket
-  - Verify: neon bucket list shows the bucket
-- [x] Write .env with the connection strings and storage vars
-  - Verify: cut -d= -f1 .env shows the keys
-- [x] Run the full verification checklist
-  - Verify: all checks pass
+- [ ] Write `sql/migrations/002_curated.sql` and apply it
+  - Verify: the staging tables, `tender_versions`, `tender_seen` and `tender_lineage` exist on dev
+- [ ] Write `tests/test_normalize.py` and `src/tender_wazi/normalize.py`
+  - Verify: the unit tests pass
+- [ ] Write `tests/test_store.py` and `src/tender_wazi/store.py`
+  - Verify: the integration tests
+- [ ] Extend the CLI to normalize and store
+  - Verify: `run --source ppip --year 2025` fills both the raw and the curated tables
+- [ ] Run the first load for both sources
+  - Verify: the open-version counts match the raw parses
+- [ ] Update the docs
+  - Verify: the data dictionary, decisions, README and glossary reflect the curated model

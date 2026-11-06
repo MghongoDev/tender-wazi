@@ -1,28 +1,26 @@
-# Plan: platform
+# Plan: curate
 
 ## Goal
 
-A working environment for the project: repo, Neon branches, credentials, storage, api_reader.
+Normalize both sources into one schema, version changed notices, and keep the history. Update the documentation at each step.
 
 ## Steps
 
-1. Scaffold the repo: .gitignore, .env.example, README.md.
-2. Create the GitHub repo and push.
-3. Rename the Neon default branch to main; create dev.
-4. Create the api schema and the api_reader role.
-5. Create the storage credential and the tender-wazi-raw bucket on main.
-6. Write .env with the direct and pooled connection strings and the storage vars.
-7. Verify: git status, psql select 1, bucket list, secret scan.
+1. Write `sql/migrations/002_curated.sql`: `staging_ppip_tenders`, `staging_portal_b_tenders`, `tender_versions`, `tender_seen`, `tender_lineage`. Apply it.
+2. Write `tests/test_normalize.py`, then `src/tender_wazi/normalize.py`: `parse_datetime`, `jurisdiction`, `normalize_ppip`, `normalize_portal_b`, `content_hash`.
+3. Write `tests/test_store.py`, then `src/tender_wazi/store.py`: the three-step versioned upsert.
+4. Extend the CLI so `run --source ppip --year 2025` and `run --source portal_b` also normalize and store.
+5. Run the first load for both sources into dev. Verify the counts and the version behaviour.
+6. Update the docs: data dictionary, decisions, README, glossary.
 
 ## Risks
 
-- Renaming the default branch could affect the pooler or endpoints. Mitigation: verify the connection strings afterwards.
-- The api_reader role needs the api schema to exist. Mitigation: create the schema first.
-- Secrets in the chat or repo. Mitigation: never echo connection strings; gitignore .env, neon.txt and the guide.
+- The PPIP category set on the full dataset is unknown; the mapping may need extending after the first load.
+- The date parsing must handle both the PPIP ISO strings and the Kenya Power DD/MM/YYYY strings.
+- The versioned upsert must be idempotent, so a rerun adds no versions.
 
 ## Verification
 
-- `git status --short` clean of secrets.
-- `psql "$DATABASE_URL_DIRECT" -c "select 1"` works.
-- `psql "$DATABASE_URL" -c "select 1"` works.
-- `neon bucket list` shows the bucket.
+- `uv run pytest -q`.
+- `psql "$DATABASE_URL_DIRECT" -c "select source, count(*) from tender_versions where valid_to is null group by 1"`.
+- A changed notice creates exactly one new version; an unchanged one creates none.

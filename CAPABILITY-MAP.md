@@ -5,7 +5,7 @@ Seven modules. Each owns its own data and tests. Build in dependency order. This
 | Module | Responsibility | Depends on |
 |---|---|---|
 | platform | Repo, Neon project and branches, credentials, object storage, Render services | — |
-| collect | PPIP OCDS reader, HTML portal scraper, polite HTTP client, raw payloads, raw_manifest, docs/sources.md, fixtures | platform |
+| collect | PPIP OCDS reader, HTML portal scraper, polite HTTP client, raw payloads, raw_manifest, docs/reference/sources.md, fixtures | platform |
 | curate | Staging tables, normalize to one schema, versioned upserts, tender_seen, tender_lineage, SQL migrations | platform, collect |
 | classify | Sector rules YAML, classifier, rules version, hand-labelled sample, measured precision and miss rate | curate |
 | quality | Row and table checks, rejects, quality_runs, volume and schema drift, source_health | curate, classify |
